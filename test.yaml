@@ -1,4 +1,4 @@
-apiVersion: k0rdent.mirantis.com/v1alpha1
+apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
   name: dex-0-19-1
