@@ -5,6 +5,9 @@ metadata:
   annotations:
     helm.sh/resource-policy: keep
 spec:
+  type: service
+  owner: user:guest
+  lifecycle: experimental
   helm:
     chartSpec:
       chart: dex
