@@ -1,0 +1,41 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: ServiceTemplate
+metadata:
+  name: my-service-template
+  title: My Service Template
+  description: A template to scaffold a new service.
+spec:
+  owner: team-devops
+  type: service
+
+  parameters:
+    - title: Service Information
+      required: [name, repoUrl]
+      properties:
+        name:
+          title: Service Name
+          type: string
+          description: Name of the service.
+        repoUrl:
+          title: Repository URL
+          type: string
+          description: Git repository for the service.
+
+  steps:
+    - id: fetch-base
+      name: Fetch Base Template
+      action: fetch:template
+      input:
+        url: ./template-folder
+        values:
+          name: ${{ parameters.name }}
+
+    - id: publish
+      name: Publish to GitHub
+      action: publish:github
+      input:
+        allowedHosts: ['github.com']
+        repoUrl: ${{ parameters.repoUrl }}
+
+  output:
+    serviceUrl: ${{ steps.publish.output.remoteUrl }}
