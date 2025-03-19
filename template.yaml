@@ -1,41 +1,64 @@
 apiVersion: scaffolder.backstage.io/v1beta3
-kind: ServiceTemplate
+kind: Template
 metadata:
-  name: my-service-template
-  title: My Service Template
-  description: A template to scaffold a new service.
+  name: simple-service-template
+  title: Simple Service Template
+  description: Create a basic service with minimal configuration
+  tags:
+    - recommended
+    - service
 spec:
-  owner: team-devops
+  owner: default-team
   type: service
-
+  
   parameters:
-    - title: Service Information
-      required: [name, repoUrl]
+    - title: Basic Information
+      required:
+        - name
+        - description
+        - owner
       properties:
         name:
-          title: Service Name
+          title: Name
           type: string
-          description: Name of the service.
-        repoUrl:
-          title: Repository URL
+          description: Unique name of the component
+          ui:autofocus: true
+          pattern: '^[a-z0-9-]+$'
+          maxLength: 64
+        description:
+          title: Description
           type: string
-          description: Git repository for the service.
-
+          description: A short description of the component
+          maxLength: 256
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - Group
+    
   steps:
-    - id: fetch-base
-      name: Fetch Base Template
+    - id: template
+      name: Fetch Template
       action: fetch:template
       input:
-        url: ./template-folder
+        url: ./skeleton
         values:
           name: ${{ parameters.name }}
-
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+  
     - id: publish
-      name: Publish to GitHub
-      action: publish:github
+      name: Publish
+      action: catalog:register
       input:
-        allowedHosts: ['github.com']
-        repoUrl: ${{ parameters.repoUrl }}
-
+        catalogInfoPath: '/catalog-info.yaml'
+        
   output:
-    serviceUrl: ${{ steps.publish.output.remoteUrl }}
+    links:
+      - title: Open in Catalog
+        url: /catalog/default/component/${{ parameters.name }}
+      - title: Open in Github
+        url: ${{ steps['publish'].output.remoteUrl }}
