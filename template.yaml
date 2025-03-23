@@ -27,16 +27,10 @@ spec:
   steps:
     - id: generate-yaml
       name: Generate YAML with Custom Action
-      action: custom:generate-yaml  # Custom action we'll define
+      action: acme:example 
       input:
         name: ${{ parameters.name }}
         resourceType: ${{ parameters.resourceType }}
-    - id: publish
-      name: Publish to GitHub (Optional)
-      action: publish:github
-      input:
-        allowedHosts: ["github.com"]
-        repoUrl: ${{ parameters.repoUrl }}  # Optional: add repoUrl to parameters if publishing
   output:
     links:
       - title: Generated YAML
