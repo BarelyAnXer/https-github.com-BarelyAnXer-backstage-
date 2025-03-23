@@ -1,64 +1,43 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: simple-service-template
-  title: Simple Service Template
-  description: Create a basic service with minimal configuration
-  tags:
-    - recommended
-    - service
+  name: dropdown-yaml-generator
+  title: Dropdown YAML Generator
+  description: Generates a YAML file based on dropdown selection
 spec:
-  owner: default-team
+  owner: user:guest
   type: service
-  
   parameters:
-    - title: Basic Information
+    - title: Configuration
       required:
+        - resourceType
         - name
-        - description
-        - owner
       properties:
         name:
-          title: Name
+          title: Resource Name
           type: string
-          description: Unique name of the component
-          ui:autofocus: true
-          pattern: '^[a-z0-9-]+$'
-          maxLength: 64
-        description:
-          title: Description
+          description: Name of the resource
+        resourceType:
+          title: Resource Type
           type: string
-          description: A short description of the component
-          maxLength: 256
-        owner:
-          title: Owner
-          type: string
-          description: Owner of the component
-          ui:field: OwnerPicker
-          ui:options:
-            allowedKinds:
-              - Group
-    
+          description: Select the type of resource
+          enum: ["server", "database", "queue"]  # Dropdown options
+          default: "server"  # Default selection
+          ui:widget: select  # Ensures it renders as a dropdown
   steps:
-    - id: template
-      name: Fetch Template
-      action: fetch:template
+    - id: generate-yaml
+      name: Generate YAML with Custom Action
+      action: custom:generate-yaml  # Custom action we'll define
       input:
-        url: ./skeleton
-        values:
-          name: ${{ parameters.name }}
-          description: ${{ parameters.description }}
-          owner: ${{ parameters.owner }}
-  
+        name: ${{ parameters.name }}
+        resourceType: ${{ parameters.resourceType }}
     - id: publish
-      name: Publish
-      action: catalog:register
+      name: Publish to GitHub (Optional)
+      action: publish:github
       input:
-        catalogInfoPath: '/catalog-info.yaml'
-        
+        allowedHosts: ["github.com"]
+        repoUrl: ${{ parameters.repoUrl }}  # Optional: add repoUrl to parameters if publishing
   output:
     links:
-      - title: Open in Catalog
-        url: /catalog/default/component/${{ parameters.name }}
-      - title: Open in Github
-        url: ${{ steps['publish'].output.remoteUrl }}
+      - title: Generated YAML
+        url: ${{ steps['publish'].output.remoteUrl || 'local-output' }}
