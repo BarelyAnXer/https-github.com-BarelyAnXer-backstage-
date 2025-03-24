@@ -1,0 +1,38 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: openstack-clusterdeployment-generator
+  title: Openstack Credentials
+  description: Generates Cluster Deployment for Openstack
+spec:
+  owner: user:guest
+  type: service
+  parameters:
+    - title: Secret Configuration
+      required:
+        - namespace
+        - cloudsFile
+      properties:
+        namespace:
+          title: Namespace
+          type: string
+          description: Kubernetes namespace for the Secret
+          default: "default"
+        cloudsFile:
+          title: Clouds YAML File
+          type: string
+          description: Upload your clouds.yaml file
+          ui:widget: file
+          ui:options:
+            accept: '.yaml,.yml' 
+  steps:
+    - id: generate-secret
+      name: Generate Secret YAML
+      action: custom:generate-openstack-secret
+      input:
+        namespace: ${{ parameters.namespace }}
+        cloudsFilePath: ${{ parameters.cloudsFile }}
+  output:
+      links:
+        - title: Generated YAML
+          url: ${{ steps['publish'].output.remoteUrl | default('local-output') }}
