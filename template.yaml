@@ -33,6 +33,6 @@ spec:
         namespace: ${{ parameters.namespace }}
         cloudsFilePath: ${{ parameters.cloudsFile }}
   output:
-    links:
-      - title: Generated YAML
-        url: ${{ steps['publish'].output.remoteUrl || 'local-output' }}
+      links:
+        - title: Generated YAML
+          url: ${{ steps['publish'].output.remoteUrl | default('local-output') }}
