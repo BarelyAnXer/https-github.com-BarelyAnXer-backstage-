@@ -2,7 +2,7 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: openstack-clusterdeployment-generator
-  title: OpenStack Cluster Deployment Generator
+  title: OpenStack Cluster Deployment
   description: Generates a ClusterDeployment resource for OpenStack
 spec:
   owner: user:guest
