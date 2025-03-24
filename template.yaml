@@ -25,7 +25,7 @@ spec:
           ui:widget: file
           ui:options:
             accept: '.yaml,.yml' 
- steps:
+  steps:
     - id: generate-secret
       name: Generate Secret YAML
       action: custom:generate-openstack-secret
