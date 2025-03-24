@@ -24,6 +24,13 @@ spec:
           enum: ["server", "database", "queue"]  # Dropdown options
           default: "server"  # Default selection
           ui:widget: select  # Ensures it renders as a dropdown
+        configFile:
+          title: Configuration File
+          type: string
+          description: Upload a configuration file (e.g., JSON, YAML, or text)
+          ui:widget: file  # Renders a file upload input
+          ui:options:
+            accept: '.yaml,.yml'  # Restrict file types (optional)
   steps:
     - id: generate-yaml
       name: Generate YAML with Custom Action
