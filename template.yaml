@@ -25,13 +25,13 @@ spec:
           ui:widget: file
           ui:options:
             accept: '.yaml,.yml' 
-  steps:
-    - id: generate-yaml
-      name: Generate YAML with Custom Action
-      action: acme:example 
+ steps:
+    - id: generate-secret
+      name: Generate Secret YAML
+      action: custom:generate-openstack-secret
       input:
-        name: ${{ parameters.name }}
-        resourceType: ${{ parameters.resourceType }}
+        namespace: ${{ parameters.namespace }}
+        cloudsFilePath: ${{ parameters.cloudsFile }}
   output:
     links:
       - title: Generated YAML
