@@ -1,9 +1,9 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: dropdown-yaml-generator
-  title: Dropdown YAML Generator
-  description: Generates a YAML file based on dropdown selection
+  name: openstack-credentials-generator
+  title: Openstack Credentials
+  description: Generates credentials for Openstack base on inputs
 spec:
   owner: user:guest
   type: service
