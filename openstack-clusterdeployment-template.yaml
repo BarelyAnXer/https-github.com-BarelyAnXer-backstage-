@@ -2,7 +2,7 @@ apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
   name: openstack-clusterdeployment-generator
-  title: Openstack Credentials
+  title: Openstack Cluster Deployment
   description: Generates Cluster Deployment for Openstack
 spec:
   owner: user:guest
@@ -28,7 +28,7 @@ spec:
   steps:
     - id: generate-secret
       name: Generate Secret YAML
-      action: custom:generate-openstack-secret
+      action: custom:generate-openstack-clusterdeployment
       input:
         namespace: ${{ parameters.namespace }}
         cloudsFilePath: ${{ parameters.cloudsFile }}
