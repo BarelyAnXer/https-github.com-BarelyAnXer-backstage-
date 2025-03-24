@@ -8,29 +8,23 @@ spec:
   owner: user:guest
   type: service
   parameters:
-    - title: Configuration
+    - title: Secret Configuration
       required:
-        - resourceType
-        - name
+        - namespace
+        - cloudsFile
       properties:
-        name:
-          title: Resource Name
+        namespace:
+          title: Namespace
           type: string
-          description: Name of the resource
-        resourceType:
-          title: Resource Type
+          description: Kubernetes namespace for the Secret
+          default: "default"
+        cloudsFile:
+          title: Clouds YAML File
           type: string
-          description: Select the type of resource
-          enum: ["server", "database", "queue"]  # Dropdown options
-          default: "server"  # Default selection
-          ui:widget: select  # Ensures it renders as a dropdown
-        configFile:
-          title: Configuration File
-          type: string
-          description: Upload a configuration file (e.g., JSON, YAML, or text)
-          ui:widget: file  # Renders a file upload input
+          description: Upload your clouds.yaml file
+          ui:widget: file
           ui:options:
-            accept: '.yaml,.yml'  # Restrict file types (optional)
+            accept: '.yaml,.yml' 
   steps:
     - id: generate-yaml
       name: Generate YAML with Custom Action
