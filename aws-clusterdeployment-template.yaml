@@ -1,0 +1,46 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: aws-credentials-generator
+  title: AWS Credentials
+  description: Generates credentials for AWS based on inputs
+spec:
+  owner: user:guest
+  type: service
+  parameters:
+    - title: AWS Secret Configuration
+      required:
+        - namespace
+        - accessKeyId
+        - secretAccessKey
+      properties:
+        namespace:
+          title: Namespace
+          type: string
+          description: Kubernetes namespace for the Secret
+          default: "default"
+        accessKeyId:
+          title: AWS Access Key ID
+          type: string
+          description: AWS Access Key ID
+        secretAccessKey:
+          title: AWS Secret Access Key
+          type: string
+          description: AWS Secret Access Key
+        sessionToken:
+          title: AWS Session Token (Optional)
+          type: string
+          description: AWS Session Token (Optional)
+  steps:
+    - id: generate-aws-secret
+      name: Generate AWS Secret YAML
+      action: custom:generate-aws-secret
+      input:
+        namespace: ${{ parameters.namespace }}
+        accessKeyId: ${{ parameters.accessKeyId }}
+        secretAccessKey: ${{ parameters.secretAccessKey }}
+        sessionToken: ${{ parameters.sessionToken }}
+  output:
+    links:
+      - title: Generated YAML
+        url: ${{ steps['generate-aws-secret'].output.remoteUrl | default('local-output') }}
