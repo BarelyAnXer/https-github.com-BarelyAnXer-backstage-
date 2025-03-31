@@ -1,0 +1,41 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: aws-cluster-deployment-generator
+  title: AWS Cluster Deployment
+  description: Generates ClusterDeployment for AWS based on inputs
+spec:
+  owner: user:guest
+  type: service
+  parameters:
+    - title: Cluster Deployment Configuration
+      required:
+        - namespace
+        - clusterNameSuffix
+        - awsRegion
+      properties:
+        namespace:
+          title: Namespace
+          type: string
+          description: Kubernetes namespace for the ClusterDeployment
+          default: "default"
+        clusterNameSuffix:
+          title: Cluster Name Suffix
+          type: string
+          description: Suffix for the cluster name (e.g., dev, prod)
+        awsRegion:
+          title: AWS Region
+          type: string
+          description: AWS region for the cluster
+  steps:
+    - id: generate-aws-cluster-deployment
+      name: Generate AWS ClusterDeployment YAML
+      action: custom:generate-aws-cluster-deployment
+      input:
+        namespace: ${{ parameters.namespace }}
+        clusterNameSuffix: ${{ parameters.clusterNameSuffix }}
+        awsRegion: ${{ parameters.awsRegion }}
+  output:
+    links:
+      - title: Generated YAML
+        url: ${{ steps['generate-aws-cluster-deployment'].output.remoteUrl | default('local-output') }}
