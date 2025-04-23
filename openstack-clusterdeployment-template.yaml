@@ -1,108 +1,66 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: openstack-clusterdeployment-generator
-  title: OpenStack Cluster Deployment
-  description: Generates a ClusterDeployment resource for OpenStack
+  name: openstack-clusterdeployment-generator
+  title: OpenStack Cluster Deployment
+  description: Generates a ClusterDeployment resource for OpenStack
 spec:
-  owner: user:guest
-  type: clusterdeployment
-  parameters:
-    - title: Cluster Deployment Configuration
-      required:
-        - namespace
-        - clusterNameSuffix
-        - controlPlaneFlavor
-        - nodeFlavor
-        - imageName
-        # Add the new parameter to required if addons must be selected, otherwise leave it out
-        # - selectedAddons
-      properties:
-        namespace:
-          title: Namespace
-          type: string
-          description: Kubernetes namespace for the ClusterDeployment
-          default: "default"
-        clusterNameSuffix:
-          title: Cluster Name Suffix
-          type: string
-          description: Suffix for the cluster name (e.g., dev, prod)
-          default: "dev"
-        controlPlaneFlavor:
-          title: Control Plane Machine Flavor
-          type: string
-          description: OpenStack flavor for control plane nodes
-          default: "m1.large"
-          # Example: If flavors were entities, you could use EntityPicker here too (for single selection)
-          # ui:field: EntityPicker
-          # ui:options:
-          #   catalogFilter:
-          #     kind: Resource # Or a custom kind like 'OpenstackFlavor'
-          #     spec.type: openstack-flavor
-        nodeFlavor:
-          title: Node Machine Flavor
-          type: string
-          description: OpenStack flavor for worker nodes
-          default: "m1.medium"
-        imageName:
-          title: OpenStack Image Name
-          type: string
-          description: Name of the OpenStack image to use
-          default: "ubuntu-20.04"
-          # Example: If images were entities, you could use EntityPicker here (for single selection)
-          # ui:field: EntityPicker
-          # ui:options:
-          #   catalogFilter:
-          #     kind: Resource # Or a custom kind like 'OpenstackImage'
-          #     spec.type: openstack-image
-        selectedAddons: # Renamed for clarity, was 'optionalComponents' in thought process
-            title: Select Optional Add-ons
-            type: array # Important: Use 'array' for multiple selections
-            description: Choose add-ons to install (e.g., monitoring, logging) represented by specific entities.
-            items:
-              type: string # The selection will return an array of entity reference strings
-            ui:field: EntityPicker # Use the EntityPicker field
-            ui:options:
-              catalogFilter: # Define filters to find the entities
-                # Option 1: Filter by kind and tags (adjust tag as needed)
-                kind: Resource # Or Component, System, API, etc. - Choose the kind of your entities
-                metadata.tags: ['openstack-addon'] # Filter entities with this specific tag
-
-                # Option 2: Filter by kind and spec properties (adjust properties as needed)
-                # kind: Resource
-                # spec.type: 'cluster-addon'
-                # spec.lifecycle: 'production'
-
-              # Note: EntityPicker for arrays usually renders as a multi-select dropdown or tag input,
-              # NOT as individual checkboxes. This is the standard Backstage behavior for dynamic multi-entity selection.
-        cloudsFile:
-          title: Clouds YAML File
-          type: string
-          description: Upload your clouds.yaml file
-          ui:widget: file
-          ui:options:
-            accept: '.yaml,.yml'
-
-  steps:
-    - id: generate-clusterdeployment
-      name: Generate and Apply ClusterDeployment
-      action: custom:generate-openstack-clusterdeployment # Make sure this custom action can handle the new parameter
-      input:
-        namespace: ${{ parameters.namespace }}
-        clusterNameSuffix: ${{ parameters.clusterNameSuffix }}
-        controlPlaneFlavor: ${{ parameters.controlPlaneFlavor }}
-        nodeFlavor: ${{ parameters.nodeFlavor }}
-        imageName: ${{ parameters.imageName }}
-        cloudsFilePath: ${{ parameters.cloudsFile }}
-        # Pass the selected addons to your custom action
-        # The value will be an array of entity refs, e.g., ["resource:default/logging-addon", "resource:default/monitoring-addon"]
-        addons: ${{ parameters.selectedAddons }}
-
-  output:
-    links:
-      - title: Generated ClusterDeployment
-        url: ${{ 'local-output' }} # Reference local output if not publishing
-      # Example: If you wanted to link to the selected entities
-      # - title: Selected Add-ons
-      #   icon: dashboard
-      #   entityRefs: ${{ parameters.selectedAddons }} # Link directly to the selected entities
+  owner: user:guest
+  type: clusterdeployment
+  parameters:
+    - title: Cluster Deployment Configuration
+      required:
+        - namespace
+        - clusterNameSuffix
+        - controlPlaneFlavor
+        - nodeFlavor
+        - imageName
+        - cloudsFile
+      properties:
+        namespace:
+          title: Namespace
+          type: string
+          description: Kubernetes namespace for the ClusterDeployment
+          default: "default"
+        clusterNameSuffix:
+          title: Cluster Name Suffix
+          type: string
+          description: Suffix for the cluster name (e.g., dev, prod)
+          default: "dev"
+        controlPlaneFlavor:
+          title: Control Plane Machine Flavor
+          type: string
+          description: OpenStack flavor for control plane nodes
+          default: "m1.large"
+        nodeFlavor:
+          title: Node Machine Flavor
+          type: string
+          description: OpenStack flavor for worker nodes
+          default: "m1.medium"
+        imageName:
+          title: OpenStack Image Name
+          type: string
+          description: Name of the OpenStack image to use
+          default: "ubuntu-20.04"
+        cloudsFile:
+          title: Clouds YAML File
+          type: string
+          description: Upload your clouds.yaml file
+          ui:widget: file
+          ui:options:
+            accept: '.yaml,.yml'
+  steps:
+    - id: generate-clusterdeployment
+      name: Generate and Apply ClusterDeployment
+      action: custom:generate-openstack-clusterdeployment
+      input:
+        namespace: ${{ parameters.namespace }}
+        clusterNameSuffix: ${{ parameters.clusterNameSuffix }}
+        controlPlaneFlavor: ${{ parameters.controlPlaneFlavor }}
+        nodeFlavor: ${{ parameters.nodeFlavor }}
+        imageName: ${{ parameters.imageName }}
+        cloudsFilePath: ${{ parameters.cloudsFile }}
+  output:
+    links:
+      - title: Generated ClusterDeployment
+        url: ${{ 'local-output' }}  # Removed publish step reference
